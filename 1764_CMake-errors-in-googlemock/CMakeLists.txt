@@ -27,16 +27,16 @@ add_subdirectory(${CMAKE_BINARY_DIR}/googletest-src
                  ${CMAKE_BINARY_DIR}/googletest-build
                  EXCLUDE_FROM_ALL)
 
-# The gtest/gtest_main targets carry header search path
-# dependencies automatically when using CMake 2.8.11 or
-# later. Otherwise we have to add them here ourselves.
-if (CMAKE_VERSION VERSION_LESS 2.8.11)
-  include_directories("${gtest_SOURCE_DIR}/include")
-endif()
+target_include_directories(gmock_main SYSTEM BEFORE INTERFACE
+    "$<BUILD_INTERFACE:${gtest_SOURCE_DIR}/include>"
+    "$<BUILD_INTERFACE:${gmock_SOURCE_DIR}/include>")
+#target_include_directories(gmock_main SYSTEM BEFORE INTERFACE
+#    "$<BUILD_INTERFACE:${gtest_SOURCE_DIR}/include>"
+#    "$<BUILD_INTERFACE:${gmock_SOURCE_DIR}/include>")
 
 # Now simply link against gtest or gtest_main as needed. Eg
 add_executable(example example.cpp)
-target_link_libraries(example gtest_main)
+target_link_libraries(example gmock_main)
 add_test(NAME example_test COMMAND example)
 
 install(TARGETS example
